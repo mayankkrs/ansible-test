@@ -1,0 +1,38 @@
+### Test Able to login by netconf
+---
+  - name: Get device facts
+    hosts: HAN
+    connection: local
+    gather_facts: no
+    vars:
+      credential:
+        host: "{{ ansible_ssh_hosts}}"
+        port: "{{ netconf_port}}"
+        username: "{{ ansible_ssh_user}}"
+        password: "{{ ansible_ssh_pass}}"
+
+    tasks:
+      - name: checking NETCONF connectivity
+        wait_for: host={{ ansible_ssh_hosts}} port={{ netconf_port}} timeout=5
+
+### Exmaple 1: Get facts (with debud msg & debug version)
+      # - name: Retrieve information from device running Junos OS
+      #   junos_facts:
+      #     host: "{{ ansible_ssh_hosts }}"
+      #     provider: "{{  credential }}"
+      #     config: no
+      #   register: junos
+      #
+      # - name: show version
+      #   debug: msg="router  {{  inventory_hostname  }}" is running  {{  version }}
+
+### Exmaple 2a: Get facts (with debud msg & debug version)
+      - name: run show version on remote device
+        junos_command:
+          host: "{{ ansible_ssh_hosts }}"
+          provider: "{{  credential }}"
+          commands: "show interface terse ge-0/0/1"
+        register: junos
+
+    #  - name: show version
+    #    debug: msg="router  {{  inventory_hostname  }}" is running  {{  version }}
